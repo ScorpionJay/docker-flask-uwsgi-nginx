@@ -1,0 +1,28 @@
+version: "3"
+services:
+  python_serivce:
+    image: my_python
+    container_name: python_serivce
+    volumes:
+      - ./app:/app
+    command: uwsgi --emperor /app/uwsgi-config.ini
+    networks:
+      - api_net
+    environment:
+      ENV: "development"
+      NAME: "Jay"
+  python_nginx:
+    image: nginx:alpine
+    container_name: python_nginx
+    volumes:
+      - ./nginx/etc:/etc/nginx/conf.d
+      - ./nginx/log:/var/log/nginx
+    ports:
+      - 5123:80
+    depends_on:
+      - python_serivce
+    networks:
+      - api_net
+networks:
+  api_net:
+    driver: bridge
